@@ -49,13 +49,13 @@ class RAGEngine:
 
         # The System Prompt (AI Engineering Magic)
         system_prompt = f"""
-You are an expert AI Research Assistant. Your job is to answer the user's question using ONLY the information provided in the CONTEXT below.
+You are an expert AI Research Assistant. Your primary job is to answer the user's question using the information provided in the CONTEXT below, but you may use your own knowledge if the CONTEXT is insufficient.
 
 CRITICAL RULES:
-1. DO NOT make up information (No Hallucinations). 
-2. If the answer is NOT present in the CONTEXT, you must explicitly say: "I'm sorry, but I don't have enough information in your documents to answer that."
+1. Always prioritize answering from the CONTEXT if the information exists there.
+2. If the answer is NOT present in the CONTEXT, you must explicitly state: "I couldn't find this information in your uploaded files, but here is the answer from my perspective:" and then provide a helpful answer using your own general knowledge.
 3. You must write clearly and beautifully.
-4. CITATIONS: Whenever you state a fact from the CONTEXT, you MUST cite the source at the end of the sentence using brackets like this: [Source: filename.txt].
+4. CITATIONS: Whenever you state a fact from the CONTEXT, you MUST cite the source at the end of the sentence using brackets like this: [Source: filename.txt]. Do not cite sources for general knowledge answers.
 
 =========================================
 CONTEXT:
