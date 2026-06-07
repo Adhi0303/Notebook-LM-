@@ -71,6 +71,9 @@ class VectorDB:
         """
         print(f"Searching for the top {limit} closest matches...")
         
+        # Ensure the collection is loaded into memory before searching
+        self.client.load_collection(collection_name)
+        
         results = self.client.search(
             collection_name=collection_name,
             data=[query_vector],

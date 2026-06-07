@@ -54,3 +54,23 @@ class EmbeddingGenerator:
         except Exception as e:
             print(f"Error generating embeddings: {str(e)}")
             return chunked_documents
+
+    def generate_query_embedding(self, query: str) -> List[float]:
+        """
+        Takes a single search query string and generates its embedding.
+        Crucially, uses task_type='RETRIEVAL_QUERY' which tells Gemini
+        to optimize this math coordinate to attract matching documents.
+        """
+        try:
+            result = self.client.models.embed_content(
+                model=self.model_name,
+                contents=query,
+                config={
+                    "task_type": "RETRIEVAL_QUERY",
+                    "output_dimensionality": 768
+                }
+            )
+            return result.embeddings[0].values
+        except Exception as e:
+            print(f"Error generating query embedding: {str(e)}")
+            return []
