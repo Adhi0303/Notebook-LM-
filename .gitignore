@@ -14,3 +14,7 @@ wheels/
 
 # Output files
 outputs/
+
+# Databases
+*.db
+*.db/
