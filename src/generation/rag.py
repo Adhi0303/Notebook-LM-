@@ -2,12 +2,13 @@ import os
 from typing import List, Dict, Any
 from google import genai
 from src.generation.retriever import SemanticRetriever
+from src.memory.memory_layer import MemoryLayer
 
 class RAGEngine:
     def __init__(self):
         """
-        Initializes the RAG Engine by connecting to the Semantic Retriever
-        and the Google Gemini Chat Model.
+        Initializes the RAG Engine by connecting to the Semantic Retriever,
+        the Memory Layer (Mem0), and the Google Gemini Chat Model.
         """
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
@@ -15,6 +16,7 @@ class RAGEngine:
         
         self.client = genai.Client(api_key=api_key)
         self.retriever = SemanticRetriever()
+        self.memory = MemoryLayer()
         
         # We use flash for incredibly fast conversational responses
         self.chat_model = "gemini-2.5-flash"
@@ -43,7 +45,10 @@ class RAGEngine:
         3. Generates an answer using Google Gemini.
         """
         print(f"Retrieving context for: '{query}'...")
-        # Get top 3 chunks
+        # 1. Get facts from Semantic Memory (Mem0)
+        memory_string = self.memory.get_memory_context(query=query)
+
+        # 2. Get top 3 chunks from Document Database (Milvus)
         chunks = self.retriever.retrieve(query=query, top_k=3)
         context_string = self.format_context(chunks)
 
@@ -56,9 +61,14 @@ CRITICAL RULES:
 2. If the answer is NOT present in the CONTEXT, you must explicitly state: "I couldn't find this information in your uploaded files, but here is the answer from my perspective:" and then provide a helpful answer using your own general knowledge.
 3. You must write clearly and beautifully.
 4. CITATIONS: Whenever you state a fact from the CONTEXT, you MUST cite the source at the end of the sentence using brackets like this: [Source: filename.txt]. Do not cite sources for general knowledge answers.
+5. MEMORY: You have been provided with past facts about the user in the MEMORY section. Use these facts to personalize your answer if relevant.
 
 =========================================
-CONTEXT:
+MEMORY (Past Facts About The User):
+{memory_string}
+
+=========================================
+CONTEXT (Uploaded Documents):
 {context_string}
 =========================================
 
@@ -71,6 +81,10 @@ USER QUESTION:
                 model=self.chat_model,
                 contents=system_prompt
             )
+            
+            # 3. Save the new interaction to Memory so Mem0 can extract new facts!
+            self.memory.save_interaction(query=query, answer=response.text)
+            
             return response.text
         except Exception as e:
             return f"Error generating response: {str(e)}"
