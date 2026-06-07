@@ -110,16 +110,43 @@ Use this document to track your learning journey. As we build each module, refer
 
 ---
 
-## Phase 6: User Interface & Assembly
-*Bringing it all together into a clean, reactive frontend.*
+## Phase 6: The "Google Stitch" Web UI
+*Bringing the backend to life with a beautiful, modern, responsive frontend.*
 
-### Module 6.1: Streamlit Integration
-*   **Tools:** `streamlit`
+### Module 6.1: API Backend Integration
+*   **Tools:** `fastapi`, `uvicorn`
 *   **AI Engineering Concepts:**
-    *   **State Management (`st.session_state`):** Keeping track of uploaded files, chat history, and system status across page reloads.
-    *   **Streaming Responses:** Fetching AI responses token-by-token (like ChatGPT) instead of waiting 10 seconds for the entire block of text to load.
+    *   **Microservices:** Decoupling your heavy AI Python backend from the web frontend so they can scale independently.
+    *   **RESTful AI Endpoints:** Creating endpoints for `/upload`, `/chat`, and `/generate_podcast`.
+
+### Module 6.2: Frontend Assembly (Next.js / React)
+*   **Tools:** `Next.js`, `React`, `TailwindCSS` (or Vanilla CSS based on design)
+*   **AI Engineering Concepts:**
+    *   **Streaming Responses:** Connecting to the backend to stream LLM tokens in real-time (like ChatGPT) instead of waiting for long generation times.
+    *   **State Management:** Handling document upload states, chat history UI, and audio player states seamlessly.
+
+---
+
+## Phase 7: Advanced "Viral" Add-On Features
+*Taking the clone from a standard RAG app to an incredible, production-grade AI product.*
+
+### Module 7.1: Directed Podcasts (The "Custom Host")
+*   **Concept:** Instead of a generic podcast, allow the user to provide a "Director's Prompt" to customize the tone, focus, and opinions of the hosts.
+*   **Implementation:** Modify `PodcastGenerator` to accept a custom prompt argument and inject it into the Multi-Persona System Prompt.
+
+### Module 7.2: Auto-Generated Study Guides & FAQs
+*   **Concept:** Instantly generate educational materials the second a user uploads a document.
+*   **Implementation:** Create a `StudyGuideGenerator` class that runs immediately after the Milvus vector ingestion, triggering a structured Gemini call to output summaries and FAQs.
+
+### Module 7.3: Clickable Source Citations
+*   **Concept:** Allow users to click on an AI's citation and physically see the source text highlighted.
+*   **Implementation:** Parse the `[Source: X]` tags from the RAG Engine and map them to the original text chunks retrieved from Milvus.
+
+### Module 7.4: The "Brain" Visualizer (Knowledge Graph)
+*   **Concept:** Visualize the user's permanent memory (Mem0 facts) as an interactive Mind Map.
+*   **Implementation:** Build an endpoint that queries Mem0 for all user facts and renders them in the frontend using a graph visualization library.
 
 ---
 
 ### How to use this guide:
-As we begin coding **Phase 1**, keep this document open. You can ask me questions like: *"Can you explain deeper how Chunk Overlap works before we write the code for it?"* or *"How exactly does PyMuPDF extract the metadata?"* 
+As we begin coding **Phase 6**, keep this document open. You can ask me questions like: *"Can you explain deeper how Streaming Responses work?"* or *"How exactly does FastAPI handle long-running podcast generation?"* 
