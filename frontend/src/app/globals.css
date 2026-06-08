@@ -1,0 +1,73 @@
+:root {
+  /* Aesthetic Notebook Color Palette */
+  --primary: #2C3333;       /* Dark Charcoal/Black */
+  --secondary: #7D8471;     /* Sage Green */
+  --tertiary: #B07D62;      /* Warm Terracotta */
+  --neutral: #F9F7F2;       /* Cream/Off-white */
+
+  /* Global background and foreground */
+  --background: var(--neutral);
+  --foreground: var(--primary);
+  
+  /* Additional UI Colors */
+  --sidebar-bg: #FFFFFF;
+  --hover-bg: #F0EDE5;
+  --border-color: #E5E2DA;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), sans-serif;
+  overflow: hidden; /* Prevent global scroll since we will use scrollable panes */
+}
+
+/* Typography Classes */
+.font-headline {
+  font-family: var(--font-playfair), serif;
+}
+
+.font-body {
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* Base Elements */
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Custom Scrollbar for the elegant feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--secondary);
+  border-radius: 10px;
+  opacity: 0.5;
+}
