@@ -23,6 +23,13 @@ class MemoryLayer:
                 "config": {
                     "api_key": api_key,
                 }
+            },
+            "vector_store": {
+                "provider": "qdrant",
+                "config": {
+                    "collection_name": "notebook_memory",
+                    "embedding_model_dims": 768
+                }
             }
         }
         
@@ -46,12 +53,18 @@ class MemoryLayer:
         Searches Mem0's database for past facts relevant to the current query.
         Returns a formatted string to inject into the prompt.
         """
-        results = self.memory.search(query, user_id=user_id)
+        results = self.memory.search(query, filters={'user_id': user_id})
         
-        if not results:
+        # Mem0 recently changed their search API to return a dict {'results': [...]} instead of a list
+        if isinstance(results, dict) and "results" in results:
+            memory_list = results["results"]
+        else:
+            memory_list = results
+            
+        if not memory_list:
             return "No previous memory found."
         
-        facts = [res['memory'] for res in results]
+        facts = [res['memory'] for res in memory_list if isinstance(res, dict) and 'memory' in res]
         
         formatted_memory = "\n".join([f"- {fact}" for fact in facts])
         return formatted_memory
