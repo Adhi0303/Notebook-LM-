@@ -1,3 +1,4 @@
+import re
 from typing import List, Dict, Any
 from src.embeddings.embedding_generator import EmbeddingGenerator
 from src.database.vector_db import VectorDB
@@ -25,11 +26,20 @@ class SemanticRetriever:
             print("Failed to generate embedding for query.")
             return []
 
+        # Step 1.5: Query Analysis (Hybrid Search)
+        # Check if the user is asking for a specific page using regex
+        page_match = re.search(r'page\s*(\d+)', query.lower())
+        filter_expr = f"page == {page_match.group(1)}" if page_match else None
+        
+        if filter_expr:
+            print(f"Detected explicit page request! Applying Metadata Filter: {filter_expr}")
+
         # Step 2 & 3: Search the vault and return the top results
         results = self.vector_db.search(
             collection_name=collection_name,
             query_vector=query_embedding,
-            limit=top_k
+            limit=top_k,
+            filter_expr=filter_expr
         )
         
         return results

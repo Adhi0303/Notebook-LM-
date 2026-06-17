@@ -48,7 +48,8 @@ class VectorDB:
                 "vector": doc["embedding"],
                 "text": doc.get("text", ""),
                 "source": doc.get("metadata", {}).get("source", "unknown"),
-                "chunk_index": doc.get("metadata", {}).get("chunk_index", -1)
+                "chunk_index": doc.get("metadata", {}).get("chunk_index", -1),
+                "page": doc.get("metadata", {}).get("page", 1)
             }
             data_to_insert.append(record)
 
@@ -64,7 +65,7 @@ class VectorDB:
         print("Insertion complete!")
         return res
 
-    def search(self, collection_name: str, query_vector: list, limit: int = 3) -> List[Dict[str, Any]]:
+    def search(self, collection_name: str, query_vector: list, limit: int = 3, filter_expr: str = None) -> List[Dict[str, Any]]:
         """
         Performs an Approximate Nearest Neighbor (ANN) search.
         Finds the top chunks mathematically closest to the query_vector.
@@ -79,7 +80,8 @@ class VectorDB:
             data=[query_vector],
             limit=limit,
             search_params={"metric_type": "COSINE"},
-            output_fields=["text", "source", "chunk_index"] # We tell Milvus to return the original text!
+            output_fields=["text", "source", "chunk_index", "page"], # We tell Milvus to return the original text and page!
+            filter=filter_expr
         )
         
         # Clean up the output to make it easy to read
@@ -90,7 +92,8 @@ class VectorDB:
                 "score": hit["distance"], # How close was the match mathematically?
                 "text": hit["entity"]["text"],
                 "source": hit["entity"]["source"],
-                "chunk_index": hit["entity"]["chunk_index"]
+                "chunk_index": hit["entity"]["chunk_index"],
+                "page": hit["entity"].get("page", 1)
             })
             
         return formatted_results
